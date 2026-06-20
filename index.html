@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Memory Book Coder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root, [data-theme="light"] {
+  --color-bg: #faf8f4; --color-surface: #f5f2ec; --color-surface-2: #f9f7f3;
+  --color-surface-offset: #ede9e1; --color-surface-offset-2: #e5e0d6;
+  --color-surface-dynamic: #dbd4c7; --color-divider: #d5cec3; --color-border: #cac2b5;
+  --color-text: #2a2117; --color-text-muted: #7a6e5f; --color-text-faint: #b5ac9e;
+  --color-text-inverse: #faf8f4; --color-primary: #8b4a2e; --color-primary-hover: #703a22;
+  --color-primary-active: #552b18; --color-primary-highlight: #e8d5cc;
+  --color-success: #4a7a3a; --color-success-highlight: #d4dfcc;
+  --color-blue: #3a6094; --color-blue-highlight: #ccd7e8;
+  --color-purple: #6a4a8a; --color-gold: #a07820; --color-gold-highlight: #ede0c4;
+  --shadow-sm: 0 1px 3px rgba(42,33,23,0.07); --shadow-md: 0 4px 16px rgba(42,33,23,0.10);
+  --shadow-lg: 0 12px 40px rgba(42,33,23,0.14);
+  --radius-sm: 0.375rem; --radius-md: 0.5rem; --radius-lg: 0.75rem;
+  --radius-xl: 1rem; --radius-full: 9999px;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'DM Sans', 'Helvetica Neue', sans-serif;
+  --text-xs: clamp(0.75rem,0.7rem + 0.25vw,0.875rem);
+  --text-sm: clamp(0.875rem,0.8rem + 0.35vw,1rem);
+  --text-base: clamp(1rem,0.95rem + 0.25vw,1.125rem);
+  --text-lg: clamp(1.125rem,1rem + 0.75vw,1.5rem);
+  --text-xl: clamp(1.5rem,1.2rem + 1.25vw,2.25rem);
+  --text-2xl: clamp(2rem,1.2rem + 2.5vw,3.5rem);
+  --space-1:.25rem;--space-2:.5rem;--space-3:.75rem;--space-4:1rem;
+  --space-5:1.25rem;--space-6:1.5rem;--space-8:2rem;--space-10:2.5rem;
+  --space-12:3rem;--space-16:4rem;--space-20:5rem;
+  --transition: 180ms cubic-bezier(0.16,1,0.3,1);
+  --content-narrow:640px;--content-default:960px;--content-wide:1200px;
+}
+[data-theme="dark"] {
+  --color-bg:#18140f;--color-surface:#1e1a14;--color-surface-2:#231f18;
+  --color-surface-offset:#26211a;--color-surface-offset-2:#2c271f;
+  --color-surface-dynamic:#35302a;--color-divider:#2e2920;--color-border:#3e3830;
+  --color-text:#e8e0d4;--color-text-muted:#9a9186;--color-text-faint:#665e54;
+  --color-text-inverse:#18140f;--color-primary:#c87a56;--color-primary-hover:#d98e68;
+  --color-primary-active:#e6a07a;--color-primary-highlight:#3d2c24;
+  --color-success:#7ab05e;--color-success-highlight:#2e3d26;
+  --color-blue:#6a9ace;--color-blue-highlight:#253550;
+  --color-purple:#a07ac0;--color-gold:#d4a840;--color-gold-highlight:#3d3020;
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.25);--shadow-md:0 4px 16px rgba(0,0,0,0.35);
+  --shadow-lg:0 12px 40px rgba(0,0,0,0.45);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme]){
+  --color-bg:#18140f;--color-surface:#1e1a14;--color-surface-2:#231f18;
+  --color-surface-offset:#26211a;--color-surface-offset-2:#2c271f;
+  --color-surface-dynamic:#35302a;--color-divider:#2e2920;--color-border:#3e3830;
+  --color-text:#e8e0d4;--color-text-muted:#9a9186;--color-text-faint:#665e54;
+  --color-primary:#c87a56;--color-primary-hover:#d98e68;--color-primary-highlight:#3d2c24;
+}}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;}
+body{font-family:var(--font-body);font-size:var(--text-base);color:var(--color-text);background:var(--color-bg);min-height:100dvh;line-height:1.6;}
+img{display:block;max-width:100%;height:auto;}
+input,button,select,textarea{font:inherit;color:inherit;}
+button{cursor:pointer;background:none;border:none;}
+h1,h2,h3,h4{text-wrap:balance;line-height:1.2;font-family:var(--font-display);}
+p,li{text-wrap:pretty;}
+a,button,[role="button"],input,select{transition:color var(--transition),background var(--transition),border-color var(--transition),box-shadow var(--transition);}
+:focus-visible{outline:2px solid var(--color-primary);outline-offset:3px;border-radius:var(--radius-sm);}
+
+.app{display:grid;grid-template-columns:260px 1fr;min-height:100dvh;}
+.sidebar{background:var(--color-surface);border-right:1px solid var(--color-border);padding:var(--space-8) var(--space-6);display:flex;flex-direction:column;gap:var(--space-8);position:sticky;top:0;height:100dvh;overflow-y:auto;}
+.main{overflow:hidden;}
+.logo-area{display:flex;align-items:center;gap:var(--space-3);padding-bottom:var(--space-6);border-bottom:1px solid var(--color-border);}
+.logo-svg{flex-shrink:0;color:var(--color-primary);}
+.logo-text{font-family:var(--font-display);font-size:var(--text-lg);font-weight:500;color:var(--color-text);line-height:1.2;}
+.logo-sub{font-size:var(--text-xs);color:var(--color-text-muted);font-family:var(--font-body);font-weight:300;}
+.sidebar-section h3{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:0.1em;color:var(--color-text-muted);font-family:var(--font-body);font-weight:500;margin-bottom:var(--space-3);}
+.nav-item{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-2) var(--space-3);border-radius:var(--radius-md);cursor:pointer;font-size:var(--text-sm);color:var(--color-text-muted);width:100%;text-align:left;}
+.nav-item:hover{background:var(--color-surface-offset);color:var(--color-text);}
+.nav-item.active{background:var(--color-primary-highlight);color:var(--color-primary);font-weight:500;}
+.nav-item svg{width:16px;height:16px;flex-shrink:0;}
+.nav-count{margin-left:auto;background:var(--color-surface-offset);color:var(--color-text-muted);font-size:var(--text-xs);padding:1px var(--space-2);border-radius:var(--radius-full);}
+.nav-item.active .nav-count{background:var(--color-primary-highlight);color:var(--color-primary);}
+.sidebar-footer{margin-top:auto;padding-top:var(--space-6);border-top:1px solid var(--color-border);display:flex;align-items:center;justify-content:space-between;}
+.sidebar-footer .stats{font-size:var(--text-xs);color:var(--color-text-muted);}
+.btn-icon{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:var(--radius-md);color:var(--color-text-muted);}
+.btn-icon:hover{background:var(--color-surface-offset);color:var(--color-text);}
+.view{display:none;padding:var(--space-10);}
+.view.active{display:block;}
+.view-header{margin-bottom:var(--space-8);padding-bottom:var(--space-6);border-bottom:1px solid var(--color-border);}
+.view-title{font-family:var(--font-display);font-size:var(--text-xl);font-weight:400;color:var(--color-text);}
+.view-subtitle{font-size:var(--text-sm);color:var(--color-text-muted);margin-top:var(--space-1);}
+.card{background:var(--color-surface);border:1px solid oklch(from var(--color-text) l c h / 0.1);border-radius:var(--radius-lg);padding:var(--space-6);}
+.card+.card{margin-top:var(--space-4);}
+.btn{display:inline-flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-5);border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:500;cursor:pointer;border:none;}
+.btn-primary{background:var(--color-primary);color:#faf8f4;}
+.btn-primary:hover{background:var(--color-primary-hover);}
+.btn-secondary{background:var(--color-surface-offset);color:var(--color-text);border:1px solid var(--color-border);}
+.btn-secondary:hover{background:var(--color-surface-offset-2);}
+.btn-ghost{color:var(--color-text-muted);padding:var(--space-2) var(--space-3);}
+.btn-ghost:hover{background:var(--color-surface-offset);color:var(--color-text);}
+.btn svg{width:16px;height:16px;}
+.form-group{margin-bottom:var(--space-5);}
+.form-label{display:block;font-size:var(--text-sm);font-weight:500;color:var(--color-text);margin-bottom:var(--space-2);}
+.form-label span{font-weight:300;color:var(--color-text-muted);}
+.form-input,.form-select{width:100%;padding:var(--space-2) var(--space-3);border:1px solid var(--color-border);border-radius:var(--radius-md);background:var(--color-surface-2);font-size:var(--text-sm);color:var(--color-text);}
+.form-input:focus,.form-select:focus{outline:none;border-color:var(--color-primary);box-shadow:0 0 0 3px var(--color-primary-highlight);}
+.form-hint{font-size:var(--text-xs);color:var(--color-text-muted);margin-top:var(--space-1);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);}
+textarea.form-input{resize:vertical;min-height:80px;}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px var(--space-2);border-radius:var(--radius-full);font-size:var(--text-xs);font-weight:500;}
+.badge-photo{background:var(--color-primary-highlight);color:var(--color-primary);}
+.badge-memory{background:var(--color-blue-highlight);color:var(--color-blue);}
+.badge-paragraph{background:var(--color-gold-highlight);color:var(--color-gold);}
+.badge-year{background:var(--color-surface-offset);color:var(--color-text-muted);font-family:var(--font-body);}
+.code-chip{font-family:'Courier New',monospace;font-size:var(--text-xs);background:var(--color-surface-offset);border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:2px var(--space-2);color:var(--color-primary);letter-spacing:0.05em;cursor:pointer;}
+.code-chip:hover{background:var(--color-primary-highlight);}
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:var(--text-sm);}
+thead th{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:0.08em;color:var(--color-text-muted);font-weight:500;font-family:var(--font-body);padding:var(--space-3) var(--space-4);border-bottom:1px solid var(--color-border);text-align:left;white-space:nowrap;}
+tbody tr{border-bottom:1px solid oklch(from var(--color-text) l c h / 0.06);}
+tbody tr:hover{background:var(--color-surface-offset);}
+tbody td{padding:var(--space-3) var(--space-4);color:var(--color-text);vertical-align:middle;}
+.td-muted{color:var(--color-text-muted);font-size:var(--text-xs);}
+.code-anatomy{background:var(--color-surface-offset);border-radius:var(--radius-lg);padding:var(--space-6);margin-top:var(--space-4);}
+.code-anatomy-title{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:0.1em;color:var(--color-text-muted);font-family:var(--font-body);margin-bottom:var(--space-4);}
+.code-parts{display:flex;gap:var(--space-2);flex-wrap:wrap;align-items:center;margin-bottom:var(--space-4);}
+.code-part{display:flex;flex-direction:column;align-items:center;gap:var(--space-1);}
+.code-part-value{font-family:'Courier New',monospace;font-size:var(--text-base);font-weight:600;padding:var(--space-1) var(--space-3);border-radius:var(--radius-md);}
+.code-part-label{font-size:var(--text-xs);color:var(--color-text-muted);}
+.code-sep{font-size:var(--text-lg);color:var(--color-text-muted);margin-top:-var(--space-4);}
+.cp-year .code-part-value{background:var(--color-primary-highlight);color:var(--color-primary);}
+.cp-type .code-part-value{background:var(--color-blue-highlight);color:var(--color-blue);}
+.cp-seq .code-part-value{background:var(--color-gold-highlight);color:var(--color-gold);}
+.code-legend{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-2);}
+.legend-item{display:flex;gap:var(--space-2);align-items:baseline;font-size:var(--text-xs);}
+.legend-key{font-family:'Courier New',monospace;font-weight:600;min-width:24px;}
+.tag-list{display:flex;flex-wrap:wrap;gap:var(--space-2);}
+.year-tabs{display:flex;gap:var(--space-2);flex-wrap:wrap;margin-bottom:var(--space-6);}
+.year-tab{padding:var(--space-1) var(--space-4);border-radius:var(--radius-full);font-size:var(--text-sm);border:1px solid var(--color-border);cursor:pointer;color:var(--color-text-muted);background:transparent;}
+.year-tab:hover{background:var(--color-surface-offset);color:var(--color-text);}
+.year-tab.active{background:var(--color-primary);border-color:var(--color-primary);color:#faf8f4;}
+.entries-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(320px,100%),1fr));gap:var(--space-4);}
+.entry-card{background:var(--color-surface);border:1px solid oklch(from var(--color-text) l c h / 0.08);border-radius:var(--radius-lg);padding:var(--space-5);display:flex;flex-direction:column;gap:var(--space-3);transition:box-shadow var(--transition),transform var(--transition);}
+.entry-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px);}
+.entry-card-header{display:flex;align-items:center;justify-content:space-between;gap:var(--space-2);}
+.entry-code{font-family:'Courier New',monospace;font-size:var(--text-sm);font-weight:600;color:var(--color-primary);}
+.entry-card-title{font-family:var(--font-display);font-size:var(--text-lg);font-weight:500;}
+.entry-card-meta{font-size:var(--text-xs);color:var(--color-text-muted);display:flex;gap:var(--space-3);align-items:center;flex-wrap:wrap;}
+.entry-card-desc{font-size:var(--text-sm);color:var(--color-text-muted);line-height:1.5;}
+.entry-card-actions{display:flex;gap:var(--space-2);margin-top:auto;flex-wrap:wrap;}
+.entry-card-actions .btn{font-size:var(--text-xs);padding:var(--space-1) var(--space-3);}
+.paragraph-card{background:var(--color-surface);border:1px solid oklch(from var(--color-text) l c h / 0.08);border-radius:var(--radius-lg);padding:var(--space-5);margin-bottom:var(--space-4);}
+.paragraph-card-header{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--space-4);margin-bottom:var(--space-3);}
+.paragraph-text{font-size:var(--text-sm);color:var(--color-text-muted);font-style:italic;font-family:var(--font-display);font-size:var(--text-base);line-height:1.7;}
+.connected-photos{margin-top:var(--space-3);padding-top:var(--space-3);border-top:1px solid var(--color-border);}
+.connected-photos-label{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:0.08em;color:var(--color-text-muted);margin-bottom:var(--space-2);}
+.toast{position:fixed;bottom:var(--space-6);right:var(--space-6);background:var(--color-text);color:var(--color-text-inverse);padding:var(--space-3) var(--space-5);border-radius:var(--radius-lg);font-size:var(--text-sm);box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transition:opacity 0.3s ease,transform 0.3s ease;transform:translateY(8px);z-index:1000;}
+.toast.show{opacity:1;transform:translateY(0);pointer-events:auto;}
+.stats-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-4);margin-bottom:var(--space-8);}
+.stat-card{background:var(--color-surface);border:1px solid oklch(from var(--color-text) l c h / 0.08);border-radius:var(--radius-lg);padding:var(--space-4) var(--space-5);}
+.stat-val{font-family:var(--font-display);font-size:var(--text-xl);font-weight:400;color:var(--color-text);font-variant-numeric:tabular-nums;}
+.stat-label{font-size:var(--text-xs);color:var(--color-text-muted);margin-top:var(--space-1);text-transform:uppercase;letter-spacing:0.08em;}
+.empty-state{display:flex;flex-direction:column;align-items:center;text-align:center;padding:var(--space-16) var(--space-8);color:var(--color-text-muted);}
+.empty-state svg{width:48px;height:48px;color:var(--color-text-faint);margin-bottom:var(--space-4);}
+.empty-state h3{font-family:var(--font-display);font-size:var(--text-lg);color:var(--color-text);margin-bottom:var(--space-2);font-weight:400;}
+.empty-state p{max-width:36ch;font-size:var(--text-sm);margin-bottom:var(--space-6);}
+.section-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-5);}
+.section-title{font-family:var(--font-display);font-size:var(--text-lg);font-weight:400;}
+.modal-overlay{display:none;position:fixed;inset:0;background:oklch(from var(--color-bg) l c h / 0.8);backdrop-filter:blur(4px);z-index:100;align-items:center;justify-content:center;padding:var(--space-4);}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-xl);padding:var(--space-8);width:100%;max-width:580px;box-shadow:var(--shadow-lg);max-height:90vh;overflow-y:auto;}
+.modal-title{font-family:var(--font-display);font-size:var(--text-xl);font-weight:400;margin-bottom:var(--space-6);}
+.modal-actions{display:flex;gap:var(--space-3);justify-content:flex-end;margin-top:var(--space-6);padding-top:var(--space-6);border-top:1px solid var(--color-border);}
+
+/* Photo upload area */
+.upload-area{border:2px dashed var(--color-border);border-radius:var(--radius-lg);padding:var(--space-8) var(--space-6);text-align:center;cursor:pointer;transition:border-color var(--transition),background var(--transition);position:relative;}
+.upload-area:hover,.upload-area.drag-over{border-color:var(--color-primary);background:var(--color-primary-highlight);}
+.upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.upload-area-icon{color:var(--color-text-faint);margin-bottom:var(--space-3);}
+.upload-area-label{font-size:var(--text-sm);color:var(--color-text-muted);}
+.upload-area-hint{font-size:var(--text-xs);color:var(--color-text-faint);margin-top:var(--space-1);}
+.upload-preview{display:flex;gap:var(--space-3);align-items:center;padding:var(--space-3);background:var(--color-surface-offset);border-radius:var(--radius-md);margin-top:var(--space-3);}
+.upload-preview img{width:56px;height:56px;object-fit:cover;border-radius:var(--radius-sm);flex-shrink:0;}
+.upload-preview-info{flex:1;min-width:0;}
+.upload-preview-name{font-size:var(--text-xs);color:var(--color-text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.upload-preview-new{font-size:var(--text-sm);font-family:monospace;font-weight:600;color:var(--color-primary);}
+.upload-clear{color:var(--color-text-faint);padding:var(--space-1);}
+.upload-clear:hover{color:var(--color-text);}
+
+/* Photo card thumbnail */
+.photo-thumb{width:100%;height:120px;object-fit:cover;border-radius:var(--radius-md);margin-bottom:var(--space-3);}
+.photo-thumb-placeholder{width:100%;height:120px;background:var(--color-surface-offset);border-radius:var(--radius-md);margin-bottom:var(--space-3);display:flex;align-items:center;justify-content:center;color:var(--color-text-faint);}
+
+/* Link modal */
+.link-photo-list{display:flex;flex-direction:column;gap:var(--space-2);max-height:300px;overflow-y:auto;}
+.link-photo-item{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3);border-radius:var(--radius-md);border:1px solid var(--color-border);cursor:pointer;transition:background var(--transition);}
+.link-photo-item:hover{background:var(--color-surface-offset);}
+.link-photo-item.selected{border-color:var(--color-primary);background:var(--color-primary-highlight);}
+.link-photo-item input[type=checkbox]{accent-color:var(--color-primary);width:16px;height:16px;flex-shrink:0;}
+.link-photo-thumb{width:40px;height:40px;object-fit:cover;border-radius:var(--radius-sm);flex-shrink:0;background:var(--color-surface-offset);}
+.link-photo-info{flex:1;min-width:0;}
+.link-photo-code{font-family:monospace;font-size:var(--text-xs);color:var(--color-primary);}
+.link-photo-title{font-size:var(--text-sm);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* Export section */
+.export-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(280px,100%),1fr));gap:var(--space-4);}
+
+@media (max-width:768px){
+  .app{grid-template-columns:1fr;}
+  .sidebar{position:static;height:auto;padding:var(--space-4);flex-direction:row;overflow-x:auto;}
+  .logo-area{display:none;}
+  .sidebar-section h3{display:none;}
+  .nav-item{flex-direction:column;gap:var(--space-1);font-size:var(--text-xs);padding:var(--space-2);}
+  .nav-count{display:none;}
+  .view{padding:var(--space-6) var(--space-4);}
+  .stats-strip{grid-template-columns:repeat(2,1fr);}
+  .form-row{grid-template-columns:1fr;}
+  .code-legend{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <nav class="sidebar">
+    <div class="logo-area">
+      <svg class="logo-svg" width="36" height="36" viewBox="0 0 36 36" fill="none">
+        <rect x="4" y="6" width="22" height="26" rx="2" stroke="currentColor" stroke-width="1.5"/>
+        <rect x="7" y="4" width="22" height="26" rx="2" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.4"/>
+        <path d="M9 13h12M9 17h10M9 21h7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+        <circle cx="27" cy="27" r="5" fill="currentColor" opacity="0.15" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M25 27l1.5 1.5L29 25" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div>
+        <div class="logo-text">Memory Book</div>
+        <div class="logo-sub">Coder</div>
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <h3>Navigate</h3>
+      <button class="nav-item active" onclick="showView('dashboard')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard <span class="nav-count" id="nc-dashboard">–</span>
+      </button>
+      <button class="nav-item" onclick="showView('photos')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10.5" r="1.5"/><path d="M21 15l-5-5-6 6"/></svg>
+        Photos &amp; Memories <span class="nav-count" id="nc-photos">0</span>
+      </button>
+      <button class="nav-item" onclick="showView('paragraphs')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 3v4a1 1 0 001 1h4"/><path d="M17 21H7a2 2 0 01-2-2V5a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2z"/><path d="M9 13h6M9 17h4"/></svg>
+        Paragraphs <span class="nav-count" id="nc-paragraphs">0</span>
+      </button>
+      <button class="nav-item" onclick="showView('system')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+        Code System
+      </button>
+      <button class="nav-item" onclick="showView('export')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export
+      </button>
+    </div>
+    <div class="sidebar-footer">
+      <div class="stats" id="sidebar-stats">0 items total</div>
+      <button class="btn-icon" data-theme-toggle aria-label="Toggle dark mode">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <main class="main">
+    <!-- Dashboard -->
+    <div class="view active" id="view-dashboard">
+      <div class="view-header">
+        <h1 class="view-title">Your Memory Book</h1>
+        <p class="view-subtitle">Organise, code, and connect your photos, mementos &amp; paragraphs</p>
+      </div>
+      <div class="stats-strip">
+        <div class="stat-card"><div class="stat-val" id="stat-photos">0</div><div class="stat-label">Photos &amp; Memories</div></div>
+        <div class="stat-card"><div class="stat-val" id="stat-paragraphs">0</div><div class="stat-label">Paragraphs</div></div>
+        <div class="stat-card"><div class="stat-val" id="stat-years">0</div><div class="stat-label">Years covered</div></div>
+        <div class="stat-card"><div class="stat-val" id="stat-linked">0</div><div class="stat-label">Linked entries</div></div>
+      </div>
+      <div class="card" style="margin-bottom:var(--space-4);">
+        <div class="section-h"><span class="section-title">Quick add</span></div>
+        <div style="display:flex;gap:var(--space-3);flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="openModal('photo')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10.5" r="1.5"/><path d="M21 15l-5-5-6 6"/></svg>
+            Add Photo / Memento
+          </button>
+          <button class="btn btn-secondary" onclick="openModal('paragraph')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3v4a1 1 0 001 1h4"/><path d="M17 21H7a2 2 0 01-2-2V5a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2z"/></svg>
+            Add Paragraph
+          </button>
+        </div>
+      </div>
+      <div id="dashboard-recent">
+        <div class="empty-state">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          <h3>Ready to begin</h3>
+          <p>Add your first photo or paragraph to start building your memory book code system.</p>
+          <button class="btn btn-primary" onclick="openModal('photo')">Add first entry</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Photos -->
+    <div class="view" id="view-photos">
+      <div class="view-header">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:var(--space-4);flex-wrap:wrap;">
+          <div>
+            <h1 class="view-title">Photos &amp; Mementos</h1>
+            <p class="view-subtitle">Each entry gets a unique code — upload a file to rename it automatically</p>
+          </div>
+          <button class="btn btn-primary" onclick="openModal('photo')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Entry
+          </button>
+        </div>
+      </div>
+      <div class="year-tabs" id="photo-year-tabs"></div>
+      <div class="entries-grid" id="photo-entries-grid">
+        <div class="empty-state" style="grid-column:1/-1;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10.5" r="1.5"/><path d="M21 15l-5-5-6 6"/></svg>
+          <h3>No entries yet</h3>
+          <p>Add your first photo or memento to get started.</p>
+          <button class="btn btn-primary" onclick="openModal('photo')">Add first photo</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Paragraphs -->
+    <div class="view" id="view-paragraphs">
+      <div class="view-header">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:var(--space-4);flex-wrap:wrap;">
+          <div>
+            <h1 class="view-title">Paragraphs</h1>
+            <p class="view-subtitle">Narrative text — link photos first, year is assigned automatically from them</p>
+          </div>
+          <button class="btn btn-primary" onclick="openModal('paragraph')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Paragraph
+          </button>
+        </div>
+      </div>
+      <div id="paragraph-list">
+        <div class="empty-state">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 3v4a1 1 0 001 1h4"/><path d="M17 21H7a2 2 0 01-2-2V5a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2z"/></svg>
+          <h3>No paragraphs yet</h3>
+          <p>Write your first memory paragraph and link it to a set of photos.</p>
+          <button class="btn btn-primary" onclick="openModal('paragraph')">Write first paragraph</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Code System -->
+    <div class="view" id="view-system">
+      <div class="view-header">
+        <h1 class="view-title">Code System</h1>
+        <p class="view-subtitle">How every item in your memory book is uniquely identified</p>
+      </div>
+      <div class="card" style="margin-bottom:var(--space-4);">
+        <h2 style="font-family:var(--font-display);font-size:var(--text-lg);font-weight:500;margin-bottom:var(--space-4);">Photo &amp; Memento Codes</h2>
+        <div class="code-anatomy">
+          <div class="code-anatomy-title">Anatomy of a code</div>
+          <div class="code-parts">
+            <div class="code-part cp-year"><div class="code-part-value">2023</div><div class="code-part-label">Year</div></div>
+            <div class="code-sep" style="margin-top:8px">–</div>
+            <div class="code-part cp-type"><div class="code-part-value">PH</div><div class="code-part-label">Type</div></div>
+            <div class="code-sep" style="margin-top:8px">–</div>
+            <div class="code-part cp-seq"><div class="code-part-value">042</div><div class="code-part-label">Sequence</div></div>
+            <div class="code-sep" style="margin-top:8px">&nbsp;</div>
+            <div style="font-size:var(--text-sm);color:var(--color-text-muted);margin-top:8px">→ <strong style="font-family:monospace;color:var(--color-primary);">2023-PH-042.jpg</strong></div>
+          </div>
+          <div class="code-legend">
+            <div class="legend-item"><span class="legend-key" style="color:var(--color-blue);">PH</span><span>Photo</span></div>
+            <div class="legend-item"><span class="legend-key" style="color:var(--color-blue);">MT</span><span>Memento (ticket, postcard…)</span></div>
+            <div class="legend-item"><span class="legend-key" style="color:var(--color-blue);">SC</span><span>Scan / Digitized doc</span></div>
+            <div class="legend-item"><span class="legend-key" style="color:var(--color-blue);">IT</span><span>Illustration / Drawing</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:var(--space-4);">
+        <h2 style="font-family:var(--font-display);font-size:var(--text-lg);font-weight:500;margin-bottom:var(--space-4);">Paragraph Codes</h2>
+        <div class="code-anatomy">
+          <div class="code-anatomy-title">Anatomy of a code — year taken from linked photos</div>
+          <div class="code-parts">
+            <div class="code-part cp-year"><div class="code-part-value">2023</div><div class="code-part-label">Year (auto)</div></div>
+            <div class="code-sep" style="margin-top:8px">–</div>
+            <div class="code-part cp-type"><div class="code-part-value">TXT</div><div class="code-part-label">Type</div></div>
+            <div class="code-sep" style="margin-top:8px">–</div>
+            <div class="code-part cp-seq"><div class="code-part-value">03</div><div class="code-part-label">Sequence</div></div>
+            <div class="code-sep" style="margin-top:8px">&nbsp;</div>
+            <div style="font-size:var(--text-sm);color:var(--color-text-muted);margin-top:8px">→ <strong style="font-family:monospace;color:var(--color-primary);">2023-TXT-03</strong></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h2 style="font-family:var(--font-display);font-size:var(--text-lg);font-weight:500;margin-bottom:var(--space-4);">Tips for physical labelling</h2>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:var(--space-3);">
+          <li style="display:flex;gap:var(--space-3);font-size:var(--text-sm);align-items:flex-start;"><span style="color:var(--color-primary);font-family:var(--font-display);font-size:var(--text-lg);line-height:1;">✦</span><span>Write codes lightly on the <strong>back</strong> of printed photos in pencil to avoid ink bleed-through.</span></li>
+          <li style="display:flex;gap:var(--space-3);font-size:var(--text-sm);align-items:flex-start;"><span style="color:var(--color-primary);font-family:var(--font-display);font-size:var(--text-lg);line-height:1;">✦</span><span>For mementos (tickets, postcards), use a small adhesive label on the back — never write directly on originals.</span></li>
+          <li style="display:flex;gap:var(--space-3);font-size:var(--text-sm);align-items:flex-start;"><span style="color:var(--color-primary);font-family:var(--font-display);font-size:var(--text-lg);line-height:1;">✦</span><span>Paragraphs reference multiple photos: list all codes in the text, e.g. <em>"(→ 2019-PH-012, 2019-MT-003)"</em>.</span></li>
+          <li style="display:flex;gap:var(--space-3);font-size:var(--text-sm);align-items:flex-start;"><span style="color:var(--color-primary);font-family:var(--font-display);font-size:var(--text-lg);line-height:1;">✦</span><span>The sequence resets per year &amp; type, so <code class="code-chip">2019-PH-001</code> and <code class="code-chip">2020-PH-001</code> are distinct.</span></li>
+          <li style="display:flex;gap:var(--space-3);font-size:var(--text-sm);align-items:flex-start;"><span style="color:var(--color-primary);font-family:var(--font-display);font-size:var(--text-lg);line-height:1;">✦</span><span>Use the <strong>Export Photos (ZIP)</strong> to download all uploaded files with their new coded names already applied.</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Export -->
+    <div class="view" id="view-export">
+      <div class="view-header">
+        <h1 class="view-title">Export</h1>
+        <p class="view-subtitle">Download your catalogue, photos with new names, or the full connection map</p>
+      </div>
+      <div class="export-grid">
+        <div class="card">
+          <h3 style="font-family:var(--font-display);font-size:var(--text-lg);font-weight:500;margin-bottom:var(--space-2);">📷 Photos ZIP</h3>
+          <p style="font-size:var(--text-sm);color:var(--color-text-muted);margin-bottom:var(--space-5);">Download all uploaded photos renamed with their codes (e.g. <code class="code-chip">2019-PH-001.jpg</code>). Only entries with an uploaded file are included.</p>
+          <button class="btn btn-primary" onclick="exportPhotosZip()">Download ZIP</button>
+        </div>
+        <div class="card">
+          <h3 style="font-family:var(--font-display);font-size:var(--text-lg);font-weight:500;margin-bottom:var(--space-2);">📋 Photo Index CSV</h3>
+          <p style="font-size:var(--text-sm);color:var(--color-text-muted);margin-bottom:var(--space-5);">All photos and mementos with codes, years, types, descriptions and linked paragraphs.</p>
+          <button class="btn btn-primary" onclick="exportCSV('photos')">Download CSV</button>
+        </div>
+        <div class="card">
+          <h3 style="font-family:var(--font-display);font-size:var(--text-lg);font-weight:500;margin-bottom:var(--space-2);">📝 Paragraph Index CSV</h3>
+          <p style="font-size:var(--text-sm);color:var(--color-text-muted);margin-bottom:var(--space-5);">All paragraphs with their auto-assigned codes and the photo codes they reference.</p>
+          <button class="btn btn-primary" onclick="exportCSV('paragraphs')">Download CSV</button>
+        </div>
+        <div class="card">
+          <h3 style="font-family:var(--font-display);font-size:var(--text-lg);font-weight:500;margin-bottom:var(--space-2);">🔗 Connection Map CSV</h3>
+          <p style="font-size:var(--text-sm);color:var(--color-text-muted);margin-bottom:var(--space-5);">One row per photo↔paragraph link — ideal for layout reference or spreadsheet cross-referencing.</p>
+          <button class="btn btn-primary" onclick="exportCSV('connections')">Download CSV</button>
+        </div>
+        <div class="card">
+          <h3 style="font-family:var(--font-display);font-size:var(--text-lg);font-weight:500;margin-bottom:var(--space-2);">📄 Full Catalogue HTML</h3>
+          <p style="font-size:var(--text-sm);color:var(--color-text-muted);margin-bottom:var(--space-5);">Printable page showing all entries grouped by year, ideal for a reference sheet.</p>
+          <button class="btn btn-primary" onclick="exportHTML()">Export HTML</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Add Photo Modal -->
+<div class="modal-overlay" id="modal-photo">
+  <div class="modal">
+    <h2 class="modal-title">Add Photo or Memento</h2>
+
+    <!-- Upload area -->
+    <div class="form-group">
+      <label class="form-label">File <span>(optional — upload to get a renamed copy on export)</span></label>
+      <div class="upload-area" id="upload-area" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+        <input type="file" id="ph-file" accept="image/*,.pdf,.jpg,.jpeg,.png,.gif,.webp,.heic,.heif" onchange="handleFileSelect(event)">
+        <div id="upload-area-content">
+          <div class="upload-area-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10.5" r="1.5"/><path d="M21 15l-5-5-6 6"/></svg>
+          </div>
+          <div class="upload-area-label">Click to select or drag a photo / scan here</div>
+          <div class="upload-area-hint">JPG, PNG, WEBP, HEIC, PDF — any image or scan</div>
+        </div>
+      </div>
+      <div id="upload-preview-wrap" style="display:none;"></div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label" for="ph-year">Year <span>(required)</span></label>
+        <input class="form-input" id="ph-year" type="number" min="1900" max="2099" placeholder="e.g. 2019">
+        <p class="form-hint" id="ph-year-hint" style="display:none;color:var(--color-success);">✓ Detected from filename</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="ph-type">Type</label>
+        <select class="form-select" id="ph-type">
+          <option value="PH">PH — Photo</option>
+          <option value="MT">MT — Memento (ticket, receipt…)</option>
+          <option value="SC">SC — Scan / Digitized doc</option>
+          <option value="IT">IT — Illustration / Drawing</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="ph-title">Title / Short description</label>
+      <input class="form-input" id="ph-title" type="text" placeholder="e.g. London Eye at sunset">
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="ph-notes">Notes <span>(optional)</span></label>
+      <textarea class="form-input" id="ph-notes" placeholder="Location, who's in it, event name…"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="ph-tags">Tags <span>(comma separated, optional)</span></label>
+      <input class="form-input" id="ph-tags" type="text" placeholder="e.g. London, travel, 2019">
+    </div>
+    <div id="ph-preview" style="display:none;margin-top:var(--space-2);padding:var(--space-3);background:var(--color-primary-highlight);border-radius:var(--radius-md);">
+      <span style="font-size:var(--text-xs);color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.08em;">Generated code: </span>
+      <span id="ph-preview-code" style="font-family:monospace;font-weight:700;color:var(--color-primary);font-size:var(--text-base);"></span>
+      <span id="ph-preview-filename" style="font-size:var(--text-xs);color:var(--color-text-muted);margin-left:var(--space-3);"></span>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('photo')">Cancel</button>
+      <button class="btn btn-primary" onclick="savePhoto()">Save Entry</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Paragraph Modal -->
+<div class="modal-overlay" id="modal-paragraph">
+  <div class="modal">
+    <h2 class="modal-title">Add Paragraph</h2>
+    <div class="form-group">
+      <label class="form-label" for="par-title">Title / Chapter name</label>
+      <input class="form-input" id="par-title" type="text" placeholder="e.g. Our trip to London">
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="par-text">Paragraph text</label>
+      <textarea class="form-input" id="par-text" style="min-height:140px;" placeholder="Write your memory here…"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Link to photos <span>(pick from your library)</span></label>
+      <div id="par-photo-picker" class="link-photo-list">
+        <div style="font-size:var(--text-sm);color:var(--color-text-muted);padding:var(--space-4);text-align:center;">Add photos first, then they'll appear here.</div>
+      </div>
+      <p class="form-hint">The year for this paragraph's code is taken from the earliest linked photo.</p>
+    </div>
+    <div id="par-preview" style="display:none;margin-top:var(--space-2);padding:var(--space-3);background:var(--color-primary-highlight);border-radius:var(--radius-md);">
+      <span style="font-size:var(--text-xs);color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.08em;">Generated code: </span>
+      <span id="par-preview-code" style="font-family:monospace;font-weight:700;color:var(--color-primary);font-size:var(--text-base);"></span>
+      <span id="par-preview-year-note" style="font-size:var(--text-xs);color:var(--color-text-muted);margin-left:var(--space-3);"></span>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('paragraph')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveParagraph()">Save Paragraph</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- JSZip for ZIP export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<script>
+// ---- State ----
+let photos = [];      // { code, year, type, title, notes, tags, linkedParagraphs, fileBlob, fileExt, objectUrl }
+let paragraphs = [];  // { code, year, title, text, links }
+let activePhotoYear = 'all';
+let pendingFile = null;  // { blob, ext, name, objectUrl }
+
+// ---- Code generation ----
+function countByTypeInYear(type, year) {
+  return photos.filter(p => p.type === type && String(p.year) === String(year)).length;
+}
+function nextPhotoSeq(type, year) { return countByTypeInYear(type, year) + 1; }
+function padSeq(n, len=3) { return String(n).padStart(len,'0'); }
+
+function genPhotoCode(year, type) {
+  const seq = nextPhotoSeq(type, year);
+  return `${year}-${type}-${padSeq(seq)}`;
+}
+function genParCode(year) {
+  const seq = paragraphs.filter(p => String(p.year) === String(year)).length + 1;
+  return `${year}-TXT-${padSeq(seq,2)}`;
+}
+
+// ---- File upload handling ----
+function handleDragOver(e) { e.preventDefault(); document.getElementById('upload-area').classList.add('drag-over'); }
+function handleDragLeave(e) { document.getElementById('upload-area').classList.remove('drag-over'); }
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('upload-area').classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file) processFile(file);
+}
+function handleFileSelect(e) {
+  const file = e.target.files[0];
+  if (file) processFile(file);
+}
+
+function processFile(file) {
+  const ext = file.name.split('.').pop().toLowerCase();
+  const url = URL.createObjectURL(file);
+  if (pendingFile && pendingFile.objectUrl) URL.revokeObjectURL(pendingFile.objectUrl);
+  pendingFile = { blob: file, ext, name: file.name, objectUrl: url };
+
+  // Try to guess year from filename (e.g. IMG_20191204... or 2019-06-...)
+  const yearMatch = file.name.match(/\b(19|20)\d{2}\b/);
+  const yearEl = document.getElementById('ph-year');
+  const hintEl = document.getElementById('ph-year-hint');
+  if (yearMatch && !yearEl.value) {
+    yearEl.value = yearMatch[0];
+    hintEl.style.display = 'block';
+  }
+
+  // Show preview
+  const wrap = document.getElementById('upload-preview-wrap');
+  const isImage = ['jpg','jpeg','png','gif','webp','heic','heif'].includes(ext);
+  wrap.innerHTML = `<div class="upload-preview">
+    ${isImage ? `<img src="${url}" class="link-photo-thumb" style="width:56px;height:56px;">` : `<div style="width:56px;height:56px;background:var(--color-surface-offset);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:var(--text-xs);color:var(--color-text-muted);">.${ext}</div>`}
+    <div class="upload-preview-info">
+      <div class="upload-preview-name">${esc(file.name)}</div>
+      <div class="upload-preview-new" id="upload-new-name">— set year &amp; type to preview new name</div>
+    </div>
+    <button class="upload-clear" onclick="clearFile()" title="Remove file">✕</button>
+  </div>`;
+  wrap.style.display = 'block';
+  document.getElementById('upload-area').style.display = 'none';
+  updatePhotoPreview();
+}
+
+function clearFile() {
+  if (pendingFile && pendingFile.objectUrl) URL.revokeObjectURL(pendingFile.objectUrl);
+  pendingFile = null;
+  document.getElementById('ph-file').value = '';
+  document.getElementById('upload-preview-wrap').style.display = 'none';
+  document.getElementById('upload-area').style.display = 'block';
+  document.getElementById('ph-year-hint').style.display = 'none';
+  updatePhotoPreview();
+}
+
+// ---- Modal helpers ----
+function openModal(type) {
+  if (type === 'photo') {
+    clearFile();
+    document.getElementById('modal-photo').classList.add('open');
+    updatePhotoPreview();
+  }
+  if (type === 'paragraph') {
+    buildPhotoPicker();
+    document.getElementById('modal-paragraph').classList.add('open');
+    updateParPreview();
+  }
+}
+function closeModal(type) { document.getElementById('modal-' + type).classList.remove('open'); }
+
+// ---- Live previews ----
+document.getElementById('ph-year').addEventListener('input', updatePhotoPreview);
+document.getElementById('ph-type').addEventListener('change', updatePhotoPreview);
+
+function updatePhotoPreview() {
+  const year = document.getElementById('ph-year').value.trim();
+  const type = document.getElementById('ph-type').value;
+  const previewEl = document.getElementById('ph-preview');
+  const codeEl = document.getElementById('ph-preview-code');
+  const fnEl = document.getElementById('ph-preview-filename');
+  if (year && year.length === 4) {
+    const code = genPhotoCode(year, type);
+    codeEl.textContent = code;
+    if (pendingFile) {
+      fnEl.textContent = `→ file will be saved as ${code}.${pendingFile.ext}`;
+      const newNameEl = document.getElementById('upload-new-name');
+      if (newNameEl) newNameEl.textContent = `${code}.${pendingFile.ext}`;
+    } else {
+      fnEl.textContent = '';
+    }
+    previewEl.style.display = 'block';
+  } else {
+    previewEl.style.display = 'none';
+    const newNameEl = document.getElementById('upload-new-name');
+    if (newNameEl) newNameEl.textContent = '— set year & type to preview new name';
+  }
+}
+
+function buildPhotoPicker() {
+  const container = document.getElementById('par-photo-picker');
+  if (photos.length === 0) {
+    container.innerHTML = '<div style="font-size:var(--text-sm);color:var(--color-text-muted);padding:var(--space-4);text-align:center;">Add photos first, then they\'ll appear here.</div>';
+    return;
+  }
+  const years = [...new Set(photos.map(p=>p.year))].sort();
+  let html = '';
+  years.forEach(y => {
+    const yPhotos = photos.filter(p => p.year === y);
+    html += `<div style="font-size:var(--text-xs);text-transform:uppercase;letter-spacing:0.08em;color:var(--color-text-muted);padding:var(--space-2) 0 var(--space-1);">${y}</div>`;
+    yPhotos.forEach(p => {
+      const isImage = p.objectUrl && ['jpg','jpeg','png','gif','webp','heic','heif'].includes(p.fileExt||'');
+      html += `<label class="link-photo-item" id="picker-item-${p.code}">
+        <input type="checkbox" value="${p.code}" onchange="updateParPreview()">
+        ${isImage ? `<img src="${p.objectUrl}" class="link-photo-thumb">` : `<div class="link-photo-thumb" style="display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--color-text-muted);">${p.type}</div>`}
+        <div class="link-photo-info">
+          <div class="link-photo-code">${p.code}</div>
+          <div class="link-photo-title">${esc(p.title)}</div>
+        </div>
+      </label>`;
+    });
+  });
+  container.innerHTML = html;
+  // Style checked items
+  container.querySelectorAll('input[type=checkbox]').forEach(cb => {
+    cb.addEventListener('change', () => {
+      cb.closest('label').classList.toggle('selected', cb.checked);
+    });
+  });
+}
+
+function getSelectedPhotoLinks() {
+  return [...document.querySelectorAll('#par-photo-picker input[type=checkbox]:checked')].map(c => c.value);
+}
+
+function updateParPreview() {
+  const links = getSelectedPhotoLinks();
+  const previewEl = document.getElementById('par-preview');
+  const codeEl = document.getElementById('par-preview-code');
+  const noteEl = document.getElementById('par-preview-year-note');
+  if (links.length > 0) {
+    // year = earliest linked photo
+    const years = links.map(c => { const p = photos.find(x=>x.code===c); return p ? p.year : 9999; });
+    const year = Math.min(...years);
+    const code = genParCode(year);
+    codeEl.textContent = code;
+    noteEl.textContent = `year from earliest linked photo (${year})`;
+    previewEl.style.display = 'block';
+  } else {
+    previewEl.style.display = 'none';
+  }
+}
+
+// ---- Save entries ----
+function savePhoto() {
+  const year = document.getElementById('ph-year').value.trim();
+  const type = document.getElementById('ph-type').value;
+  const title = document.getElementById('ph-title').value.trim();
+  if (!year || year.length !== 4 || !title) { showToast('Please fill in year and title.'); return; }
+  const code = genPhotoCode(year, type);
+  const tags = document.getElementById('ph-tags').value.split(',').map(t=>t.trim()).filter(Boolean);
+  const entry = {
+    code,
+    year: parseInt(year),
+    type,
+    title,
+    notes: document.getElementById('ph-notes').value.trim(),
+    tags,
+    linkedParagraphs: [],
+    fileBlob: pendingFile ? pendingFile.blob : null,
+    fileExt: pendingFile ? pendingFile.ext : null,
+    objectUrl: pendingFile ? pendingFile.objectUrl : null,
+  };
+  photos.push(entry);
+  pendingFile = null; // ownership transferred
+  closeModal('photo');
+  clearForm(['ph-year','ph-title','ph-notes','ph-tags']);
+  document.getElementById('ph-type').value = 'PH';
+  document.getElementById('upload-preview-wrap').style.display = 'none';
+  document.getElementById('upload-area').style.display = 'block';
+  document.getElementById('ph-year-hint').style.display = 'none';
+  renderAll();
+  showToast('Entry saved: ' + code);
+}
+
+function saveParagraph() {
+  const title = document.getElementById('par-title').value.trim();
+  const text = document.getElementById('par-text').value.trim();
+  const links = getSelectedPhotoLinks();
+  if (!title) { showToast('Please fill in a title.'); return; }
+  if (links.length === 0) { showToast('Please link at least one photo.'); return; }
+  const years = links.map(c => { const p = photos.find(x=>x.code===c); return p ? p.year : 9999; });
+  const year = Math.min(...years);
+  const code = genParCode(year);
+  paragraphs.push({ code, year, title, text, links });
+  links.forEach(c => { const p = photos.find(x => x.code === c); if(p && !p.linkedParagraphs.includes(code)) p.linkedParagraphs.push(code); });
+  closeModal('paragraph');
+  clearForm(['par-title','par-text']);
+  renderAll();
+  showToast('Paragraph saved: ' + code);
+}
+
+function clearForm(ids) { ids.forEach(id => { const el = document.getElementById(id); if(el) el.value=''; }); }
+
+// ---- Render ----
+function renderAll() {
+  updateStats();
+  renderPhotos();
+  renderParagraphs();
+  renderDashboard();
+}
+
+function updateStats() {
+  const years = [...new Set([...photos.map(p=>p.year),...paragraphs.map(p=>p.year)])];
+  const linked = paragraphs.reduce((n,p) => n + (p.links.length > 0 ? 1 : 0), 0);
+  document.getElementById('stat-photos').textContent = photos.length;
+  document.getElementById('stat-paragraphs').textContent = paragraphs.length;
+  document.getElementById('stat-years').textContent = years.length;
+  document.getElementById('stat-linked').textContent = linked;
+  document.getElementById('nc-photos').textContent = photos.length;
+  document.getElementById('nc-paragraphs').textContent = paragraphs.length;
+  document.getElementById('nc-dashboard').textContent = photos.length + paragraphs.length || '–';
+  document.getElementById('sidebar-stats').textContent = (photos.length + paragraphs.length) + ' items total';
+}
+
+function renderPhotos() {
+  const years = [...new Set(photos.map(p=>p.year))].sort();
+  const tabsEl = document.getElementById('photo-year-tabs');
+  tabsEl.innerHTML = '';
+  if (photos.length === 0) {
+    document.getElementById('photo-entries-grid').innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10.5" r="1.5"/><path d="M21 15l-5-5-6 6"/></svg><h3>No entries yet</h3><p>Add your first photo or memento to get started.</p><button class="btn btn-primary" onclick="openModal('photo')">Add first photo</button></div>`;
+    return;
+  }
+  const allBtn = document.createElement('button');
+  allBtn.className = 'year-tab' + (activePhotoYear==='all'?' active':'');
+  allBtn.textContent = 'All years';
+  allBtn.onclick = () => { activePhotoYear='all'; renderPhotos(); };
+  tabsEl.appendChild(allBtn);
+  years.forEach(y => {
+    const btn = document.createElement('button');
+    btn.className = 'year-tab' + (String(activePhotoYear)===String(y)?' active':'');
+    btn.textContent = y;
+    btn.onclick = () => { activePhotoYear=y; renderPhotos(); };
+    tabsEl.appendChild(btn);
+  });
+  const filtered = activePhotoYear==='all' ? photos : photos.filter(p=>p.year===activePhotoYear);
+  const grid = document.getElementById('photo-entries-grid');
+  grid.innerHTML = '';
+  filtered.forEach((p) => {
+    const typeLabel = {PH:'Photo',MT:'Memento',SC:'Scan',IT:'Illustration'}[p.type]||p.type;
+    const isImage = p.objectUrl && ['jpg','jpeg','png','gif','webp','heic','heif'].includes(p.fileExt||'');
+    const card = document.createElement('div');
+    card.className = 'entry-card';
+    card.innerHTML = `
+      ${isImage ? `<img src="${p.objectUrl}" class="photo-thumb" loading="lazy">` : `<div class="photo-thumb-placeholder"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10.5" r="1.5"/><path d="M21 15l-5-5-6 6"/></svg></div>`}
+      <div class="entry-card-header">
+        <span class="entry-code">${p.code}</span>
+        <span class="badge badge-${p.type==='PH'?'photo':'memory'}">${typeLabel}</span>
+      </div>
+      <div class="entry-card-title">${esc(p.title)}</div>
+      ${p.notes?`<div class="entry-card-desc">${esc(p.notes)}</div>`:''}
+      <div class="entry-card-meta">
+        <span>${p.year}</span>
+        ${p.fileBlob?`<span style="color:var(--color-success);">📎 ${p.code}.${p.fileExt}</span>`:'<span style="color:var(--color-text-faint);">no file</span>'}
+        ${p.linkedParagraphs.length?`<span style="color:var(--color-gold);">↔ ${p.linkedParagraphs.length} paragraph${p.linkedParagraphs.length>1?'s':''}</span>`:''}
+      </div>
+      <div class="entry-card-actions">
+        <button class="btn btn-ghost" onclick="copyCode('${p.code}')">Copy code</button>
+        ${p.fileBlob?`<button class="btn btn-ghost" onclick="downloadSingle(${photos.indexOf(p)})">⬇ Download</button>`:''}
+        <button class="btn btn-ghost" style="color:var(--color-error,#a12c7b);" onclick="deletePhoto(${photos.indexOf(p)})">Remove</button>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function renderParagraphs() {
+  const container = document.getElementById('paragraph-list');
+  if (paragraphs.length === 0) {
+    container.innerHTML = `<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 3v4a1 1 0 001 1h4"/><path d="M17 21H7a2 2 0 01-2-2V5a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2z"/></svg><h3>No paragraphs yet</h3><p>Write your first memory paragraph and link it to a set of photos.</p><button class="btn btn-primary" onclick="openModal('paragraph')">Write first paragraph</button></div>`;
+    return;
+  }
+  container.innerHTML = '';
+  [...paragraphs].sort((a,b)=>a.year-b.year).forEach((p) => {
+    const realIdx = paragraphs.indexOf(p);
+    const card = document.createElement('div');
+    card.className = 'paragraph-card';
+    card.innerHTML = `
+      <div class="paragraph-card-header">
+        <div>
+          <div style="display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-2);">
+            <span class="entry-code">${p.code}</span>
+            <span class="badge badge-year">${p.year}</span>
+          </div>
+          <h3 style="font-family:var(--font-display);font-size:var(--text-lg);font-weight:500;">${esc(p.title)}</h3>
+        </div>
+        <button class="btn btn-ghost" style="color:var(--color-error,#a12c7b);flex-shrink:0;" onclick="deleteParagraph(${realIdx})">Remove</button>
+      </div>
+      ${p.text?`<p class="paragraph-text">"${esc(p.text)}"</p>`:''}
+      ${p.links.length?`<div class="connected-photos"><div class="connected-photos-label">Linked entries</div><div class="tag-list">${p.links.map(c=>{const ph=photos.find(x=>x.code===c);return `<span class="code-chip" onclick="copyCode('${c}')" title="${ph?esc(ph.title):'Not found'}">${c}</span>`;}).join('')}</div></div>`:'<div class="connected-photos"><div class="connected-photos-label" style="color:var(--color-text-faint);">No photos linked</div></div>'}
+      <div style="margin-top:var(--space-3);display:flex;gap:var(--space-2);">
+        <button class="btn btn-ghost" onclick="copyCode('${p.code}')">Copy code</button>
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+function renderDashboard() {
+  const container = document.getElementById('dashboard-recent');
+  if (photos.length === 0 && paragraphs.length === 0) {
+    container.innerHTML = `<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg><h3>Ready to begin</h3><p>Add your first photo or paragraph to start building your memory book code system.</p><button class="btn btn-primary" onclick="openModal('photo')">Add first entry</button></div>`;
+    return;
+  }
+  const years = [...new Set([...photos.map(p=>p.year),...paragraphs.map(p=>p.year)])].sort((a,b)=>b-a);
+  container.innerHTML = '<div class="section-h"><span class="section-title">By year</span></div>';
+  years.forEach(y => {
+    const yPhotos = photos.filter(p=>p.year===y);
+    const yPars = paragraphs.filter(p=>p.year===y);
+    const section = document.createElement('div');
+    section.className = 'card';
+    section.style.marginBottom = 'var(--space-4)';
+    section.innerHTML = `<div style="display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-4);"><h3 style="font-family:var(--font-display);font-size:var(--text-xl);font-weight:400;">${y}</h3><span class="badge badge-photo">${yPhotos.length} items</span><span class="badge badge-paragraph">${yPars.length} paragraphs</span></div><div class="tag-list">${yPhotos.slice(0,8).map(p=>`<span class="code-chip" onclick="copyCode('${p.code}')" title="${esc(p.title)}">${p.code}</span>`).join('')}${yPhotos.length>8?`<span style="font-size:var(--text-xs);color:var(--color-text-muted);">+${yPhotos.length-8} more</span>`:''}</div>`;
+    container.appendChild(section);
+  });
+}
+
+// ---- Delete ----
+function deletePhoto(idx) {
+  const p = photos[idx];
+  if (p.objectUrl) URL.revokeObjectURL(p.objectUrl);
+  const code = p.code;
+  photos.splice(idx, 1);
+  paragraphs.forEach(par => { par.links = par.links.filter(c => c !== code); });
+  renderAll();
+  showToast('Entry removed.');
+}
+function deleteParagraph(idx) {
+  const code = paragraphs[idx].code;
+  photos.forEach(p => { p.linkedParagraphs = p.linkedParagraphs.filter(c => c !== code); });
+  paragraphs.splice(idx, 1);
+  renderAll();
+  showToast('Paragraph removed.');
+}
+
+// ---- Download single file ----
+function downloadSingle(idx) {
+  const p = photos[idx];
+  if (!p.fileBlob) { showToast('No file attached to this entry.'); return; }
+  const a = document.createElement('a');
+  a.href = p.objectUrl;
+  a.download = `${p.code}.${p.fileExt}`;
+  a.click();
+  showToast(`Downloaded: ${p.code}.${p.fileExt}`);
+}
+
+// ---- ZIP export ----
+async function exportPhotosZip() {
+  const withFiles = photos.filter(p => p.fileBlob);
+  if (withFiles.length === 0) { showToast('No files uploaded yet. Add photos with a file attached first.'); return; }
+  showToast(`Building ZIP with ${withFiles.length} file(s)…`);
+  try {
+    const zip = new JSZip();
+    for (const p of withFiles) {
+      const arrayBuf = await p.fileBlob.arrayBuffer();
+      zip.file(`${p.code}.${p.fileExt}`, arrayBuf);
+    }
+    const blob = await zip.generateAsync({ type: 'blob', compression: 'STORE' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'memorybook-photos.zip';
+    a.click();
+    showToast(`ZIP ready — ${withFiles.length} file(s) renamed!`);
+  } catch(err) {
+    showToast('ZIP export failed: ' + err.message);
+  }
+}
+
+// ---- CSV / HTML Export ----
+function exportCSV(type) {
+  let rows, header;
+  if (type === 'photos') {
+    header = 'Code,Year,Type,Title,Notes,Tags,Has File,Filename,Linked Paragraphs';
+    rows = photos.map(p => [p.code, p.year, p.type, csvQ(p.title), csvQ(p.notes), csvQ(p.tags.join('; ')), p.fileBlob?'yes':'no', p.fileBlob?`${p.code}.${p.fileExt}`:'', csvQ(p.linkedParagraphs.join('; '))].join(','));
+  } else if (type === 'paragraphs') {
+    header = 'Code,Year,Title,Text,Linked Photos';
+    rows = paragraphs.map(p => [p.code, p.year, csvQ(p.title), csvQ(p.text), csvQ(p.links.join('; '))].join(','));
+  } else if (type === 'connections') {
+    header = 'Paragraph Code,Paragraph Year,Paragraph Title,Photo Code,Photo Year,Photo Type,Photo Title';
+    rows = [];
+    paragraphs.forEach(par => {
+      if (par.links.length === 0) {
+        rows.push([par.code, par.year, csvQ(par.title), '', '', '', ''].join(','));
+      } else {
+        par.links.forEach(pc => {
+          const ph = photos.find(x=>x.code===pc);
+          rows.push([par.code, par.year, csvQ(par.title), pc, ph?ph.year:'', ph?ph.type:'', ph?csvQ(ph.title):''].join(','));
+        });
+      }
+    });
+  }
+  const csv = [header, ...rows].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `memorybook-${type}.csv`;
+  a.click();
+  showToast('CSV downloaded!');
+}
+
+function csvQ(s) { return '"' + String(s||'').replace(/"/g,'""') + '"'; }
+
+function exportHTML() {
+  const years = [...new Set([...photos.map(p=>p.year),...paragraphs.map(p=>p.year)])].sort();
+  let body = '<html><head><meta charset="UTF-8"><title>Memory Book Catalogue</title><style>body{font-family:Georgia,serif;max-width:800px;margin:40px auto;padding:20px;color:#2a2117;}h1{font-size:2em;margin-bottom:8px;}h2{font-size:1.5em;border-bottom:1px solid #cac2b5;padding-bottom:8px;margin:32px 0 16px;}table{width:100%;border-collapse:collapse;margin-bottom:24px;font-size:0.9em;}th{text-align:left;font-size:0.75em;text-transform:uppercase;letter-spacing:0.08em;color:#7a6e5f;padding:8px;border-bottom:1px solid #cac2b5;}td{padding:8px;border-bottom:1px solid #ede9e1;}code{font-family:monospace;font-size:0.9em;color:#8b4a2e;background:#e8d5cc;padding:1px 4px;border-radius:3px;}.par{background:#faf8f4;border-left:3px solid #8b4a2e;padding:12px 16px;margin:12px 0;border-radius:4px;}.par-code{font-family:monospace;font-size:0.8em;color:#8b4a2e;}.par-title{font-weight:bold;margin:4px 0;}.par-text{font-style:italic;color:#7a6e5f;margin:4px 0;font-size:0.95em;}.par-links{font-size:0.8em;color:#7a6e5f;margin-top:6px;}</style></head><body>';
+  body += '<h1>Memory Book Catalogue</h1><p style="color:#7a6e5f;">Generated ' + new Date().toLocaleDateString('it-IT') + '</p>';
+  years.forEach(y => {
+    body += `<h2>${y}</h2>`;
+    const yPhotos = photos.filter(p=>p.year===y);
+    if (yPhotos.length) {
+      body += '<table><tr><th>Code</th><th>Type</th><th>Title</th><th>File</th><th>Notes</th><th>Tags</th></tr>';
+      yPhotos.forEach(p => { body += `<tr><td><code>${p.code}</code></td><td>${p.type}</td><td>${p.title}</td><td>${p.fileBlob?`${p.code}.${p.fileExt}`:''}</td><td>${p.notes||''}</td><td>${p.tags.join(', ')}</td></tr>`; });
+      body += '</table>';
+    }
+    const yPars = paragraphs.filter(p=>p.year===y);
+    yPars.forEach(p => { body += `<div class="par"><div class="par-code">${p.code}</div><div class="par-title">${p.title}</div>${p.text?`<div class="par-text">"${p.text}"</div>`:''}${p.links.length?`<div class="par-links">→ ${p.links.join(', ')}</div>`:''}</div>`; });
+  });
+  body += '</body></html>';
+  const blob = new Blob([body], { type: 'text/html' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'memorybook-catalogue.html';
+  a.click();
+  showToast('HTML catalogue downloaded!');
+}
+
+// ---- Navigation ----
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  document.querySelector(`[onclick="showView('${name}')"]`).classList.add('active');
+}
+
+// ---- Utils ----
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function copyCode(code) { if(navigator.clipboard) navigator.clipboard.writeText(code).catch(()=>{}); showToast('Copied: ' + code); }
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ---- Dark mode toggle ----
+(function(){
+  const t = document.querySelector('[data-theme-toggle]');
+  const r = document.documentElement;
+  let d = matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
+  r.setAttribute('data-theme', d);
+  function setIcon(theme) {
+    if (!t) return;
+    t.innerHTML = theme==='dark'
+      ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'
+      : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+  }
+  setIcon(d);
+  t && t.addEventListener('click', () => { d=d==='dark'?'light':'dark'; r.setAttribute('data-theme',d); setIcon(d); });
+})();
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => { if(e.target===overlay) overlay.classList.remove('open'); });
+});
+
+// ---- Sample data ----
+(function seedSample() {
+  photos.push({ code:'2019-PH-001', year:2019, type:'PH', title:'London Eye at sunset', notes:'Taken from the South Bank', tags:['London','travel'], linkedParagraphs:['2019-TXT-01'], fileBlob:null, fileExt:null, objectUrl:null });
+  photos.push({ code:'2019-MT-001', year:2019, type:'MT', title:'Eurostar ticket LGW-STN', notes:'Outbound, June 12', tags:['London','transport'], linkedParagraphs:['2019-TXT-01'], fileBlob:null, fileExt:null, objectUrl:null });
+  photos.push({ code:'2019-PH-002', year:2019, type:'PH', title:'Brick Lane Sunday market', notes:'Street food stalls', tags:['London','food'], linkedParagraphs:[], fileBlob:null, fileExt:null, objectUrl:null });
+  photos.push({ code:'2022-PH-001', year:2022, type:'PH', title:'Wedding ceremony at Villa Balbiano', notes:'Lago di Como', tags:['wedding','Como'], linkedParagraphs:['2022-TXT-01'], fileBlob:null, fileExt:null, objectUrl:null });
+  photos.push({ code:'2022-SC-001', year:2022, type:'SC', title:'Wedding invitation scan', notes:'Printed card', tags:['wedding'], linkedParagraphs:['2022-TXT-01'], fileBlob:null, fileExt:null, objectUrl:null });
+  paragraphs.push({ code:'2019-TXT-01', year:2019, title:'Our weekend in London', text:'We took the early Eurostar and arrived at St Pancras just as the city was waking up. The Eye glowed gold in the late evening light — a sight we had dreamed about for years.', links:['2019-PH-001','2019-MT-001'] });
+  paragraphs.push({ code:'2022-TXT-01', year:2022, title:'The wedding day', text:'The ceremony was held in the garden of Villa Balbiano, surrounded by the still waters of Lago di Como. Time seemed to stop.', links:['2022-PH-001','2022-SC-001'] });
+  renderAll();
+})();
+</script>
+</body>
+</html>
